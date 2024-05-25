@@ -1,4 +1,6 @@
 using JWTImplementation.Context;
+using JWTImplementation.Interfaces;
+using JWTImplementation.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,8 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddDbContext<JwtContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Database")));
-
-
+builder.Services.AddTransient<IEmployeeService, EmployeeService>();
+builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -22,11 +24,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

@@ -19,15 +19,18 @@ namespace JWTImplementation.Services
             return employee;
         }
 
-        public void deleteEmployee(int id)
+        public bool deleteEmployee(int id)
         {
+            var flag = false;
             var emp = _jwtContext.usersByEmail.SingleOrDefault(s=>s.id==id);
             if (emp == null)
             {
-                throw new Exception("user not found");
+                return flag;
             }
             _jwtContext.usersByEmail.Remove(emp);
             _jwtContext.SaveChanges();
+            flag = true;
+            return flag;
         }
 
         public List<Employee> GetEmployeeDetails()

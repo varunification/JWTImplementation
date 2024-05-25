@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JWTImplementation.Migrations
 {
     [DbContext(typeof(JwtContext))]
-    [Migration("20240522082745_First")]
+    [Migration("20240525172033_First")]
     partial class First
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
