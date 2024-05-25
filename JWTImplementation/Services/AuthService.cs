@@ -28,34 +28,39 @@ namespace JWTImplementation.Services
 
         public string Login(LoginRequest loginRequest)
         {
-            if (loginRequest.userName != null && loginRequest.password!=null)
+            if (string.IsNullOrEmpty(loginRequest.userName) || string.IsNullOrEmpty(loginRequest.password))
             {
-                var user = _jwtContext.users.FirstOrDefault(x => x.Email == loginRequest.userName && x.Password == loginRequest.password);
-                if (user != null)
-                {
-                    var Claims = new[]
-                    {
-                        new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
-                        new Claim("Id", user.Id.ToString()),
-                        new Claim("UserName", user.name),
-                        new Claim("Email", user.Email)
-                    };
-                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-                    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-                    var token = new JwtSecurityToken(
-                        issuer: _configuration["Jwt:Issuer"],
-                        audience: _configuration["Jwt:Audience"],
-                        claims: Claims,
-                        expires: DateTime.UtcNow.AddMinutes(30),
-                        signingCredentials: creds);
-
-                   string jettoken = (new JwtSecurityTokenHandler().WriteToken(token));
-                    return jettoken;
-                }
-
+                return "Invalid credentials";
             }
-            return "creds are not valid";
+
+            var user = _jwtContext.users
+                .FirstOrDefault(x => x.Email == loginRequest.userName && x.Password == loginRequest.password);
+
+            if (user == null)
+            {
+                return "Invalid credentials";
+            }
+
+            var claims = new[]
+            {
+        new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
+        new Claim("Id", user.Id.ToString()),
+        new Claim("UserName", user.name),
+        new Claim("Email", user.Email)
+    };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(30),
+                signingCredentials: creds);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
     }
 }

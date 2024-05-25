@@ -31,7 +31,7 @@ namespace JWTImplementation.Controllers
         }
 
         // PUT api/<AuthController>/5
-        [HttpPost]
+        [HttpPost("addUser")]
         public User AddUser([FromBody] User value)
         {
             var user = _authService.AddUser(value);

@@ -14,9 +14,13 @@ namespace JWTImplementation.Services
 
         public Employee AddEmployee(Employee employee)
         {
-            var t = _jwtContext.usersByEmail.Add(employee);
+
+
+
+            employee.id = 0;
+            var temp = _jwtContext.usersByEmail.Add(employee);
             _jwtContext.SaveChanges();
-            return employee;
+            return temp.Entity;
         }
 
         public bool deleteEmployee(int id)
